@@ -1,6 +1,15 @@
+import uuid
+
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
+from stdimage import StdImageField
+
+
+def get_file_path(instance, filename):
+    ext = filename.split('.')[-1]
+    filename = f'{uuid.uuid4()}.{ext}'
+    return filename
 
 
 class BaseModel(models.Model):
@@ -15,3 +24,25 @@ class BaseModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+class Academy(BaseModel):
+    name = models.CharField(_('Nome'), max_length=100, null=False, blank=False)
+    description = models.TextField(_('Descrição'), max_length=200, null=True, blank=True)
+    logo = StdImageField(_('Logo'), upload_to=get_file_path,
+                         variations={'thumb': {'width': 480, 'height': 480, 'crop': True}})
+
+    class Meta:
+        verbose_name = _('Academia')
+        verbose_name_plural = _('Academias')
+
+    def __str__(self):
+        return self.name
+
+
+class Course:
+    pass
+
+
+class Training:
+    pass
